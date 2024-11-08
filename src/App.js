@@ -1,25 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { auth } from './firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from './firebase';
 
-function App() {
+const App = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [item, setItem] = useState('');
+
+  const handleSignup = async () =>{
+    try{
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert("User Registered")
+    } catch (error){
+      alert(error.message);
+    }
+
+  };
+
+  const handleLogin = async () => {
+    try{
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert("User Logged in")
+    } catch (error){
+      alert(error.message);
+    }
+  };
+
+  const handleAddItem = async () => {
+    if (item) {
+      await addDoc(collection(db, 'items'), {name: item});
+      setItem('');
+    }
+  };
+    
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Firebase Add Data</h1>
+      <input type='email' placeholder='email' value={email} onChange={(e) => setEmail(e.target.value)}/>
+      <input type='password' placeholder='password' value={password} onChange={(e) => setPassword(e.target.value)}/>
+      <button onClick={handleSignup}>Sing Up</button>
+      <button onClick={handleLogin}>Login</button>
+
+      <h2>Add Item</h2>
+      <input type='text' placeholder='add an items' value={item} onChange={(e) => setItem(e.target.value)}/>
+      <button onClick={handleAddItem}>Add</button>
     </div>
   );
-}
+};
 
 export default App;
